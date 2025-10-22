@@ -1,97 +1,91 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# Projeto Lista de Tarefas
 
-# Getting Started
+Este é um aplicativo de lista de tarefas simples, desenvolvido com React Native, TypeScript e banco de dados local (Realm).
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+## ⚙️ Como Instalar e Rodar o Projeto
 
-## Step 1: Start Metro
+Siga as instruções abaixo para configurar e executar o projeto em seu ambiente de desenvolvimento.
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+**Pré-requisitos:**
+*   Node.js v18.18.0
+*   Ambiente de desenvolvimento React Native configurado para seu sistema operacional (Android/iOS). Siga o [guia oficial](https://reactnative.dev/docs/environment-setup).
+*   CocoaPods (para iOS)
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+**Passos:**
 
-```sh
-# Using npm
-npm start
+1.  **Clone o repositório:**
+    ```bash
+    git clone <URL_DO_REPOSITORIO>
+    cd lista_de_tarefa
+    ```
 
-# OR using Yarn
-yarn start
-```
+2.  **Instale as dependências:**
+    ```bash
+    npm install
+    ```
 
-## Step 2: Build and run your app
+3.  **Instale os Pods (apenas para iOS):**
+    ```bash
+    cd ios
+    pod install
+    cd ..
+    ```
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
+4.  **Execute o aplicativo:**
 
-### Android
+    *   **Para Android:**
+        ```bash
+        npm run android
+        ```
 
-```sh
-# Using npm
-npm run android
+    *   **Para iOS:**
+        ```bash
+        npm run ios
+        ```
 
-# OR using Yarn
-yarn android
-```
+## 🛠️ Tecnologias e Bibliotecas
 
-### iOS
+A seleção de tecnologias visou criar uma base de código moderna, tipada e de fácil manutenção.
 
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
+*   **TypeScript:** Adicionado para garantir a segurança de tipos, resultando em um código mais previsível, auto-documentado e com menos bugs em tempo de execução.
+*   **Realm Database:** Selecionado como banco de dados local por sua alta performance, facilidade de uso com objetos e capacidade offline-first, ideal para uma aplicação mobile onde a conectividade pode variar.
+*   **React Navigation:** Utilizado para gerenciar a navegação entre as telas do aplicativo de forma declarativa e intuitiva.
+*   **React Native Image Picker & Compressor:** Para permitir que o usuário adicione imagens às tarefas e as comprima para otimizar o armazenamento.
+*   **react-native-fs:** Utilizada para interagir com o sistema de arquivos do dispositivo, permitindo salvar a imagem capturada em um local permanente.
+*   **react-native-geolocation-service:** Empregada para obter a localização do usuário (latitude e longitude) e associá-la a uma tarefa.
+*   **react-native-uuid:** Usada para gerar identificadores únicos para cada nova tarefa, garantindo que cada registro tenha uma chave primária exclusiva no banco de dados.
 
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
+## 💾 Implementação da Persistência
 
-```sh
-bundle install
-```
+A persistência de dados foi estruturada em duas camadas principais para desacoplar a lógica de negócio da interface do usuário:
 
-Then, and every time you update your native dependencies, run:
+1.  **Banco de Dados com Realm:**
+    *   No diretório `src/database/`, o arquivo `realm.ts` configura a conexão com o banco de dados e define o schema da entidade `Tarefa`.
+    *   O serviço `src/database/services/tarefas.ts` abstrai todas as operações de CRUD (Criar, Ler, Atualizar, Deletar), fornecendo uma forma simples para interagir com o banco de dados (ex: `getAll`, `create`, `update`, `deleteById`).
 
-```sh
-bundle exec pod install
-```
+2.  **React Context API (`TarefaContext`):**
+    *   O `src/contexts/TarefaContext.tsx` atua como um provedor de estado global para as tarefas.
+    *   Ele busca os dados do serviço de tarefas (Realm) e os disponibiliza para todos os componentes aninhados.
+    *   Funções como `adicionarTarefa`, `excluirTarefa`, etc., são expostas pelo contexto. Elas primeiro chamam o serviço correspondente para persistir a alteração no Realm e, em seguida, atualizam o estado do contexto para que a UI seja renderizada novamente com os dados mais recentes.
 
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
+Este padrão (Service Layer + Context API) centraliza a lógica de dados, tornando o código mais organizado e fácil de manter.
 
-```sh
-# Using npm
-npm run ios
+## 챌린지 Desafios e Soluções
 
-# OR using Yarn
-yarn ios
-```
+O principal desafio durante o desenvolvimento foi a adaptação ao **TypeScript**. Vindo de uma experiência primária com JavaScript, a necessidade de definir tipos estritos para todos os componentes, props, estados e, especialmente, para os objetos do Realm, exigiu uma curva de aprendizado.
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+**Solução:** O desafio foi superado com pesquisa na documentação oficial do TypeScript, Realm e todas as outras libs utilizadas, e com a prática de criar interfaces e tipos (como em `src/types/tarefa.ts`). Embora tenha aumentado o tempo inicial de desenvolvimento.
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+## 🔮 O que eu faria diferente com mais tempo
 
-## Step 3: Modify your app
+Com um cronograma mais extenso, as seguintes melhorias seriam implementadas:
 
-Now that you have successfully run the app, let's make changes!
+*   **Estilização e UI/UX:** Investiria mais tempo no design do aplicativo, criando uma interface mais bonita e moderna, com animações e transições suaves para melhorar a experiência do usuário.
+*   **Funcionalidades Adicionais:** Implementaria recursos como:
+    *   Notificações para lembrar o usuário de tarefas pendentes.
+    *   Notificações mais bonitas ao invés do padrão do dispositivo.
+*   **Testes Unitários:** Adicionaria testes unitários para os serviços do banco de dados e para a lógica dos componentes para garantir a estabilidade do app a longo prazo.
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+## ⏱️ Tempo Total Investido
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
-
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+O tempo total investido neste projeto foi de aproximadamente **6 horas**.
