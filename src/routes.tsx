@@ -9,6 +9,8 @@ import DetalhesScreen from "./screens/detalhes";
 
 import { criaDiretorioImagem } from "./utils/fileUtils";
 
+import { TarefaProvider } from './contexts/TarefaContext';
+
 export type RootStackParamList = {
     Listagem: undefined;
     Operacao: undefined;
@@ -50,7 +52,9 @@ export default function App() {
         <SafeAreaView
             style={{flex: 1, backgroundColor: 'black'}}>
             <StatusBar barStyle={'dark-content'}/>
-            <Navigation />
+            <TarefaProvider>
+                <Navigation />
+            </TarefaProvider>
         </SafeAreaView>
     
     );

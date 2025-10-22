@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet, Image, Platform } from 'react-native';
+import uuid from 'react-native-uuid';
 
 import CustomTextInput from '../components/CustomTextInput';
 import ImagePickerButton from '../components/ImagePickerButton';
@@ -7,13 +8,20 @@ import ExcluirButton from '../components/ExcluirButton';
 import CustomTextButton from '../components/CustomTextButton';
 
 import localizaoUsuario from '../utils/getLocation';
+import { copiaParaDiretorioDeImagens } from '../utils/fileUtils';
+
+import { useTarefa } from '../contexts/TarefaContext';
+import { Tarefa } from '../types/tarefa';
 
 export default function OperacaoScreen() {
+
+  const { postTarefa } = useTarefa();
+
   const [titulo, setTitulo] = useState<string>('');
   const [descricao, setDescricao] = useState<string>('');
   const [imageUri, setImageUri] = useState<string | null>(null);
-  const [latitude, setLatitude] = useState<string | null>(null);
-  const [longitude, setLongitude] = useState<string | null>(null);
+  const [latitude, setLatitude] = useState<number | null>(null);
+  const [longitude, setLongitude] = useState<number | null>(null);
 
   const handleImageSelected = (uri: string) => {
     setImageUri(uri);
@@ -24,16 +32,32 @@ export default function OperacaoScreen() {
   const capturaLocalizacao = async () => {
     const {latitude, longitude} = await localizaoUsuario();    
 
-    setLatitude(latitude.toString());
-    setLongitude(longitude.toString());
+    setLatitude(latitude);
+    setLongitude(longitude);
   }
 
-  const salvarTarefa = async () => {
-    console.log("titulo - ", titulo);
-    console.log("descricao - ", descricao);
-    console.log("imageUri - ", imageUri);
-    console.log("latitude - ", latitude);
-    console.log("longitude - ", longitude);
+  const salvarTarefa = async ():Promise<void> => {
+
+    let caminhoImagemAjustado: string = '';
+
+    if(imageUri != null){
+      const response = await copiaParaDiretorioDeImagens(imageUri);
+      caminhoImagemAjustado = response;
+    }
+
+    const tarefa:Tarefa = {
+      id: uuid.v4(),
+      title: titulo,
+      description: descricao,
+      completed: false,
+      imageUri: caminhoImagemAjustado,
+      latitude: latitude ? latitude : 0,
+      longitude: longitude ? longitude : 0,
+      createdAt: new Date(),
+    }
+
+    postTarefa(tarefa);
+    
   }
 
   return (

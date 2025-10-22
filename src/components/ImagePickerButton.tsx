@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Button, Modal, StyleSheet, Text, Touchable, TouchableOpacity } from 'react-native';
 import { launchCamera, launchImageLibrary, ImagePickerResponse } from 'react-native-image-picker';
 import CustomTextButton from './CustomTextButton';
+import requestCameraPermission from '../utils/getCameraPermission';
 
 interface ImagePickerButtonProps {
   onImageSelected: (uri: string) => void;
@@ -25,8 +26,13 @@ const ImagePickerButton: React.FC<ImagePickerButtonProps> = ({ onImageSelected }
     }
   };
 
-  const chamaCamera = () => {
-    launchCamera({ mediaType: 'photo' }, handleResponse);
+  const chamaCamera = async () => {
+    const hasPermission = await requestCameraPermission();
+    if (hasPermission) {
+      launchCamera({ mediaType: 'photo' }, handleResponse);
+    } else {
+      console.log('Permissão da câmera negada');
+    }
   };
 
   const chamaGaleria = () => {
