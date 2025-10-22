@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, Platform, Alert } from 'react-native';
 import uuid from 'react-native-uuid';
+import { Image as ImageCompressor } from 'react-native-compressor';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 
 import CustomTextInput from '../components/CustomTextInput';
 import ImagePickerButton from '../components/ImagePickerButton';
@@ -11,10 +14,10 @@ import localizaoUsuario from '../utils/getLocation';
 import { copiaParaDiretorioDeImagens } from '../utils/fileUtils';
 
 import { useTarefa } from '../contexts/TarefaContext';
+
 import { Tarefa } from '../types/tarefa';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
 import { RootStackParamList } from '../routes';
-import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 
 type OperacaoScreenRouteProp = RouteProp<RootStackParamList, 'Operacao'>;
 
@@ -73,7 +76,9 @@ export default function OperacaoScreen() {
     let caminhoImagemAjustado: string = '';
 
     if(imageUri != null){
-      const response = await copiaParaDiretorioDeImagens(imageUri);
+      const compressedImage = await ImageCompressor.compress(imageUri);
+      
+      const response = await copiaParaDiretorioDeImagens(compressedImage);
       caminhoImagemAjustado = response;
     }
 
