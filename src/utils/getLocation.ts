@@ -12,7 +12,7 @@ export interface Coordinates {
 const solicitaPermissaoLocalizacao = async (): Promise<boolean> => {
   try {
     if (Platform.OS === 'ios') {
-      return true;
+      return await Geolocation.requestAuthorization('whenInUse') === 'granted';
     }
 
     const granted = await PermissionsAndroid.request(
