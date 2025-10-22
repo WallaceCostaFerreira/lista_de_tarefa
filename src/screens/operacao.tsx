@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, Platform } from 'react-native';
+import { View, Text, StyleSheet, Image, Platform, Alert } from 'react-native';
 import uuid from 'react-native-uuid';
 
 import CustomTextInput from '../components/CustomTextInput';
@@ -12,8 +12,12 @@ import { copiaParaDiretorioDeImagens } from '../utils/fileUtils';
 
 import { useTarefa } from '../contexts/TarefaContext';
 import { Tarefa } from '../types/tarefa';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../routes';
+import { useNavigation } from '@react-navigation/native';
 
 export default function OperacaoScreen() {
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const { postTarefa } = useTarefa();
 
@@ -38,6 +42,11 @@ export default function OperacaoScreen() {
 
   const salvarTarefa = async ():Promise<void> => {
 
+    if(!titulo){
+      Alert.alert("Título","Necessário preencher o título!");
+      return;
+    }
+
     let caminhoImagemAjustado: string = '';
 
     if(imageUri != null){
@@ -58,6 +67,7 @@ export default function OperacaoScreen() {
 
     postTarefa(tarefa);
     
+    navigation.goBack();
   }
 
   return (

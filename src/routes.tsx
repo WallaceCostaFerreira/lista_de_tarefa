@@ -14,7 +14,7 @@ import { TarefaProvider } from './contexts/TarefaContext';
 export type RootStackParamList = {
     Listagem: undefined;
     Operacao: undefined;
-    Detalhes: undefined;
+    Detalhes: { tarefaId: string };
 };
 
 const RootStack = createNativeStackNavigator<RootStackParamList>({
@@ -35,7 +35,7 @@ const RootStack = createNativeStackNavigator<RootStackParamList>({
         Detalhes: {
             screen: DetalhesScreen,
             options:{
-                headerShown: false
+                title: "Detalhes da tarefa"
             }
         },
     },
