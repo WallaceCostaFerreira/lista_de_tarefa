@@ -10,10 +10,11 @@ import DetalhesScreen from "./screens/detalhes";
 import { criaDiretorioImagem } from "./utils/fileUtils";
 
 import { TarefaProvider } from './contexts/TarefaContext';
+import { Tarefa } from './types/tarefa';
 
 export type RootStackParamList = {
     Listagem: undefined;
-    Operacao: undefined;
+    Operacao: { tarefa?: Tarefa } | undefined;
     Detalhes: { tarefaId: string };
 };
 

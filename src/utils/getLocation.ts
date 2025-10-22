@@ -2,7 +2,7 @@ import Geolocation, {
   GeoPosition, 
   GeoError 
 } from 'react-native-geolocation-service';
-import { PermissionsAndroid, Platform } from 'react-native';
+import { Alert, PermissionsAndroid, Platform } from 'react-native';
 
 export interface Coordinates {
   latitude: number;
@@ -37,7 +37,7 @@ const getLocation = (): Promise<Coordinates> => {
     const response = await solicitaPermissaoLocalizacao();
     
     if (!response) {
-      reject(new Error('Permissão de localização negada'));
+      Alert.alert("Permissão de localização","Para utilizar essa função é necessário permitir o uso de GPS do aparelho.");
       return;
     }
 

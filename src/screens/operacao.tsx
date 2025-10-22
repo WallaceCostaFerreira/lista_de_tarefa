@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, Platform, Alert } from 'react-native';
 import uuid from 'react-native-uuid';
 
@@ -14,18 +14,41 @@ import { useTarefa } from '../contexts/TarefaContext';
 import { Tarefa } from '../types/tarefa';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../routes';
-import { useNavigation } from '@react-navigation/native';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+
+type OperacaoScreenRouteProp = RouteProp<RootStackParamList, 'Operacao'>;
 
 export default function OperacaoScreen() {
+  const route = useRoute<OperacaoScreenRouteProp>();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const tarefa:Tarefa | undefined = route.params?.tarefa;
 
-  const { postTarefa } = useTarefa();
+  const { postTarefa, putTarefa } = useTarefa();
 
+  const [createdAt, setCreatedAt] = useState<Date>(new Date());
+  const [id, setId] = useState<string>('');
   const [titulo, setTitulo] = useState<string>('');
   const [descricao, setDescricao] = useState<string>('');
   const [imageUri, setImageUri] = useState<string | null>(null);
   const [latitude, setLatitude] = useState<number | null>(null);
   const [longitude, setLongitude] = useState<number | null>(null);
+
+  useEffect(() => {
+
+    const inicializaCampos = () => {
+      if(tarefa){
+        setId(tarefa.id);
+        setTitulo(tarefa.title);
+        setDescricao(tarefa.description);
+        setImageUri(tarefa.imageUri ? tarefa.imageUri : null);
+        setLatitude(tarefa.latitude ? tarefa.latitude : null);
+        setLongitude(tarefa.longitude ? tarefa.longitude : null);
+        setCreatedAt(tarefa.createdAt);
+      }
+    }
+
+    inicializaCampos();
+  }, [tarefa])
 
   const handleImageSelected = (uri: string) => {
     setImageUri(uri);
@@ -54,18 +77,22 @@ export default function OperacaoScreen() {
       caminhoImagemAjustado = response;
     }
 
-    const tarefa:Tarefa = {
-      id: uuid.v4(),
+    const tarefaAux:Tarefa = {
+      id: id ? id : uuid.v4(),
       title: titulo,
       description: descricao,
       completed: false,
       imageUri: caminhoImagemAjustado,
       latitude: latitude ? latitude : 0,
       longitude: longitude ? longitude : 0,
-      createdAt: new Date(),
+      createdAt: createdAt,
     }
 
-    postTarefa(tarefa);
+    if(id){
+      putTarefa(tarefaAux);
+    }else{
+      postTarefa(tarefaAux);
+    }
     
     navigation.goBack();
   }

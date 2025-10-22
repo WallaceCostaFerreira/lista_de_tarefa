@@ -62,27 +62,27 @@ export default function DetalhesScreen() {
             }
           }
         />
+        {!tarefa.completed &&
+          <CustomTextButton
+            text='Concluir tarefa'
+            onPress={
+              () => {
+                const tarefaAux:Tarefa = {
+                  ...tarefa,
+                  completed: true
+                } 
 
-        <CustomTextButton
-          text='Concluir tarefa'
-          onPress={
-            () => {
-              const tarefaAux:Tarefa = {
-                ...tarefa,
-                completed: true
-              } 
-
-              putTarefa(tarefaAux);
-              navigation.goBack();
+                putTarefa(tarefaAux);
+                navigation.goBack();
+              }
             }
-          }
-        />
-
+          />
+        }
         <CustomTextButton
           text='Editar tarefa'
           onPress={
             () => {
-              // navigation.navigate('Operacao', {tarefa: tarefa});
+              navigation.navigate('Operacao', {tarefa: tarefa});
             }
           }
         />

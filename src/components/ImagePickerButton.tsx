@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Button, Modal, StyleSheet, Text, Touchable, TouchableOpacity } from 'react-native';
+import { View, Button, Modal, StyleSheet, Text, Touchable, TouchableOpacity, Alert } from 'react-native';
 import { launchCamera, launchImageLibrary, ImagePickerResponse } from 'react-native-image-picker';
 import CustomTextButton from './CustomTextButton';
 import requestCameraPermission from '../utils/getCameraPermission';
@@ -31,7 +31,7 @@ const ImagePickerButton: React.FC<ImagePickerButtonProps> = ({ onImageSelected }
     if (hasPermission) {
       launchCamera({ mediaType: 'photo' }, handleResponse);
     } else {
-      console.log('Permissão da câmera negada');
+      Alert.alert('Permissão da câmera negada',"Para utilizar esse função é necessário conceder a permissão da camera.");
     }
   };
 
