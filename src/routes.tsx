@@ -1,9 +1,13 @@
+import React, { useEffect } from 'react';
 import { Platform, SafeAreaView, StatusBar } from "react-native";
 import { createStaticNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+
 import ListagemScreen from "./screens/listagem";
 import OperacaoScreen from "./screens/operacao";
 import DetalhesScreen from "./screens/detalhes";
+
+import { criaDiretorioImagem } from "./utils/fileUtils";
 
 export type RootStackParamList = {
     Listagem: undefined;
@@ -38,6 +42,10 @@ const RootStack = createNativeStackNavigator<RootStackParamList>({
 const Navigation = createStaticNavigation(RootStack);
 
 export default function App() {
+    useEffect(() => {
+        criaDiretorioImagem();
+    }, []);
+
     return (
         <SafeAreaView
             style={{flex: 1, backgroundColor: 'black'}}>
