@@ -21,6 +21,10 @@ export default function ListagemScreen() {
     setListaTarefas(tarefas);
   })
 
+  useEffect(() => {
+    setListaTarefas(tarefas);
+  }, [tarefas])
+
   return (
     <View style={styles.container}>
       <View style={styles.rowFilter}>

@@ -1,15 +1,7 @@
-import React, { createContext, ReactNode, useState, useContext } from "react";
+import React, { createContext, ReactNode, useState, useContext, useEffect } from "react";
 
-interface Tarefa {
-    id: string;
-    title: string;
-    description: string;
-    completed: boolean;
-    imageUri?: string;
-    latitude?: number;
-    longitude?: number;
-    createdAt: Date;
-}
+import { deleteTarefaDB, getAllTarefasDB, postTarefaDB, putTarefaDB } from "../database/services/tarefas";
+import { Tarefa } from "../types/tarefa";
 
 interface TarefaContextData {
   tarefas: Tarefa[];
@@ -24,11 +16,31 @@ const TarefaContext = createContext<TarefaContextData | undefined>(undefined);
 export const TarefaProvider = ({ children }: { children: ReactNode }) => {
     const [tarefas, setTarefas] = useState<Tarefa[]>([]);
 
+    useEffect(() => {
+        const carregaDadosDB = () => {
+            try {
+                const response = getAllTarefasDB();
+                console.log("carregaDadosDB - ", response);
+                
+                if(response.length > 0){
+                    setTarefas(response);
+                }
+            } catch (error) {
+                console.error("Erro ao carregar tarefas do DB:", error);
+            }
+        };
+
+        carregaDadosDB();
+    }, []);
+
     const postTarefa = async (tarefa: Tarefa): Promise<Tarefa> => {
         const novaTarefa: Tarefa = {
             ...tarefa,
         };
         setTarefas(prev => [...prev, novaTarefa]);
+
+        postTarefaDB(novaTarefa);
+
         return novaTarefa;
     };
 
@@ -36,6 +48,9 @@ export const TarefaProvider = ({ children }: { children: ReactNode }) => {
         setTarefas(prev => 
             prev.map(t => t.id === tarefa.id ? tarefa : t)
         );
+
+        putTarefaDB(tarefa);
+
         return tarefa;
     };
 
@@ -45,6 +60,7 @@ export const TarefaProvider = ({ children }: { children: ReactNode }) => {
 
     const deleteTarefa = async (id: string): Promise<void> => {
         setTarefas(prev => prev.filter(t => t.id !== id));
+        deleteTarefaDB(id);
     };
 
     const value: TarefaContextData = {

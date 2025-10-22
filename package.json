@@ -22,7 +22,7 @@
     "react-native-safe-area-context": "^5.6.1",
     "react-native-screens": "^4.17.1",
     "react-native-uuid": "^2.0.3",
-    "realm": "^12.5.0"
+    "realm": "^12.14.2"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
